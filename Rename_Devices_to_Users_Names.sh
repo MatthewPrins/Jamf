@@ -3,7 +3,7 @@
 #!/bin/bash
 #Matthew Prins 2022 mdprins@gmail.com
 
-#Rename devices to user's name in a Jamf device group 
+#Rename devices to users' names in a Jamf mobile device group 
 
 #Token portion of code based on https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
 #URL encoding function from https://gist.github.com/cdown/1163649
