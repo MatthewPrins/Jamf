@@ -1,9 +1,10 @@
 #!/bin/bash
-#Matthew Prins 2022 mdprins@gmail.com
+#Matthew Prins 2022
+#https://github.com/MatthewPrins/Jamf/
 
 #Restart all items in a particular mobile group in Jamf
 
-#Token code based on https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
+#Code for getting token from https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
 
 #Jamf credentials
 username="xxxxxx"
