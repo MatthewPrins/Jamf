@@ -12,13 +12,13 @@ password="xxxxxx"
 url="https://xxxxxx.jamfcloud.com"
 
 #Group ID number -- found in URL on group's page
-groupid="13"
+groupid="123"
 
 #computers or mobile devices -- if computers is true then computers, if false then mobile devices
 computers=true
 
 #app that's version is being counted -- exact name in Jamf (INCLUDE .app extension for computers)
-app="8x8 Work.app"
+app="Google Chrome.app"
 
 #Token variable declarations -- leave alone
 bearerToken=""
