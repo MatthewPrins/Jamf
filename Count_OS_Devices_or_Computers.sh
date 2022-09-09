@@ -2,7 +2,7 @@
 #Matthew Prins 2022
 #https://github.com/MatthewPrins/Jamf/
 
-#Count number of computers or devices on each OS in a particular group
+#Count number of computers or devices on each OS version in a particular group
 #Combines iOS/iPadOS/tvOS, so separate them into Jamf groups if that isn't what you want
 
 #Token code based on https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
