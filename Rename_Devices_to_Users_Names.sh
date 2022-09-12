@@ -3,8 +3,6 @@
 
 #Rename devices to users' names in a Jamf mobile device group 
 
-#Token portion of code based on https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
-
 #Jamf credentials
 username="xxxxxx"
 password="xxxxxx"
@@ -19,31 +17,17 @@ additionaltext="iPhone 12"
 #Enforce device name -- set to false if you do not want that enforced
 enforcedevicename=true
 
-#Token variable declarations
-bearerToken=""
-tokenExpirationEpoch="0"
-
-#Token functions
+#Token function -- from https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
 getBearerToken() {
 	response=$(curl -s -u "$username":"$password" "$url"/api/v1/auth/token -X POST)
 	bearerToken=$(echo "$response" | plutil -extract token raw -)
 	tokenExpiration=$(echo "$response" | plutil -extract expires raw - | awk -F . '{print $1}')
 	tokenExpirationEpoch=$(date -j -f "%Y-%m-%dT%T" "$tokenExpiration" +"%s")
-}
-
-checkTokenExpiration() {
-	nowEpochUTC=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
-	if [[ tokenExpirationEpoch -gt nowEpochUTC ]]
-	then
-		echo "Token valid until the following epoch time: " "$tokenExpirationEpoch"
-	else
-		echo "No valid token available, getting new token"
-		getBearerToken
-	fi
+	echo "New bearer token"
 }
 
 #get token
-checkTokenExpiration
+getBearerToken
 
 #pull XML data from Jamf, change it to a csv list
 
