@@ -1,6 +1,4 @@
 #!/bin/bash
-
-#!/bin/bash
 #Matthew Prins 2022 mdprins@gmail.com
 
 #Standardize Asset Tags -- add leading zero to five-digit asset tags to make them six digits long
