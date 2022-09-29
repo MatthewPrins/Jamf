@@ -50,10 +50,10 @@ else
 	xmlpath="//mobile_device/id"
 fi
 
-#pull XML data from Jamf, change it to a csv list
+#pull XML data from Jamf, change it to a list
 
 #curl: pull XML data based on user group ID
-#xmllint: keep only the mobile device IDs from the XML (e.g. <id>456</id>)
+#xmllint: keep only the IDs from the XML (e.g. <id>456</id>)
 #1st sed: delete "<id>"s
 #2nd sed: replace "</id>"s with spaces
 #3rd sed: delete extra final space
@@ -84,7 +84,7 @@ groupaddlist=""
 for value in $userslist
 do
 	#curl: retrieve all user XML data from the current ID
-	#xmllint: from that XML, pull the mobile devices field
+	#xmllint: from that XML, pull the mobile devices/computers field
 	#1st sed: delete "<id>"s
 	#2nd sed: replace "</id>"s with spaces
 	#3rd sed: delete extra final space
