@@ -1,7 +1,7 @@
 #!/bin/bash
 #Matthew Prins 2022 mdprins@gmail.com
 
-#Standardize Asset Tags -- add leading zero to five-digit asset tags to make them six digits long
+#Standardize Asset Tags -- add a leading zero to five-digit asset tags to make them six digits long
 
 #Token code based on https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
 
