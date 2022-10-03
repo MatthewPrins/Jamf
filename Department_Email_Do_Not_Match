@@ -1,0 +1,136 @@
+#!/bin/bash
+#Matthew Prins 2022
+#https://github.com/MatthewPrins/Jamf/
+
+#Exports CSV of devices where department doesn't match email addresses
+
+###########################
+#Editable variables
+
+#Jamf credentials
+username="xxxxxx"
+password="xxxxxx"
+url="https://xxxxxx.jamfcloud.com"
+source credentials.sh
+
+#computers or mobile devices -- if $computers is true then looking for computers, if false then mobile devices
+computers=false
+
+#device group pulling users from -- if pulling all devices set groupid=0
+groupid=0
+
+#connecting email addresses and departments
+	#leave this line
+	emailarray=() | departmentarray=()
+	
+	#add a pair for each email substring to search for and which department it is supposed to be in
+	#pair 1
+	emailarray+=("24@")
+	departmentarray+=("Grad2024")
+	#pair 2
+	emailarray+=("25@")
+	departmentarray+=("Grad2025")
+	#pair 3
+	emailarray+=("26@")
+	departmentarray+=("Grad2026")
+	
+#############################
+
+#Token function -- from https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
+getBearerToken() {
+	response=$(curl -s -u "$username":"$password" "$url"/api/v1/auth/token -X POST)
+	bearerToken=$(echo "$response" | plutil -extract token raw -)
+	tokenExpiration=$(echo "$response" | plutil -extract expires raw - | awk -F . '{print $1}')
+	tokenExpirationEpoch=$(date -j -f "%Y-%m-%dT%T" "$tokenExpiration" +"%s")
+}
+
+#get token
+getBearerToken 
+
+#get path for computer or devices
+if [[ $computers = true ]]; then
+	grouptype="computergroups"
+	pathtype="computer"
+	JSSpathtype="computers"
+else
+	grouptype="mobiledevicegroups"
+	pathtype="mobile_device"
+	JSSpathtype="mobiledevices"
+fi
+
+#set curl url based on group ID (or lack thereof)
+if [[ $groupid != "0" ]]; then
+	grouppath="$grouptype/id/$groupid"
+else
+	grouppath="$JSSpathtype"
+fi
+
+#pull XML data from Jamf, change it to a list
+
+#curl: pull XML data based on group ID
+#xmllint: keep only the mobile device IDs from the XML (e.g. <id>456</id>)
+#1st sed: delete "<id>"s
+#2nd sed: replace "</id>"s with spaces
+#3rd sed: delete extra final space
+
+devices=$(curl -s -H "Authorization: Bearer ${bearerToken}" "Accept: application/xml" \
+	$url/JSSResource/$grouppath \
+	| xmllint --xpath "//$pathtype/id" - \
+	| sed 's/<id>//g' \
+	| sed 's/<\/id>/ /g' \
+	| sed 's/.$//')
+
+#get total count of users -- counting the number of "words" in $userslist
+numberdevices=$(echo -n "$devices" | wc -w)
+
+echo $numberdevices Inputted
+echo 
+echo 0 /$numberdevices
+
+#iterate over the IDs of the users
+
+counter=0
+addcounter=0
+csvexport=()
+
+for value in $devices; do
+	#curl: retrieve all user XML data from the current ID
+		devicelocation=$(curl --request GET \
+		--silent \
+		--url $url/JSSResource/$JSSpathtype/id/$value/subset/Location \
+		--header 'Accept: application/xml' \
+		--header "Authorization: Bearer ${bearerToken}")
+
+	#pull out appropriate info from $devicelocation with xmllint
+	deviceemail=$(echo $devicelocation | xmllint --xpath "//email_address/text()" 2>/dev/null -)
+	devicedepartment=$(echo $devicelocation | xmllint --xpath "//department/text()" 2>/dev/null -)
+
+	#if the email/department logic doesn't match, add the device ID/email/department to the CSV export
+	for i in $(seq 0 $((${#departmentarray[@]}-1))); do 
+		if [[ $deviceemail == *${emailarray[$i]}* ]] && [[ $devicedepartment != ${departmentarray[$i]} ]]; then
+			csvexport+=($value,$deviceemail,$devicedepartment)
+		fi
+	done
+	
+	#print status every 50
+	let "counter+=1" 
+	if [[ $(expr $counter % 10) = "0" ]]
+	then
+		echo $counter /$numberdevices
+	fi
+	
+	#reset token every 500
+	if [[ $(expr $counter % 500) = "0" ]]
+	then
+		getBearerToken
+	fi
+done
+
+echo $numberdevices /$numberdevices
+echo
+echo ${#csvexport[@]} devices that meet criteria:
+echo 
+echo "ID,email,department"
+
+#print CSV array line by line
+printf '%s\n' "${csvexport[@]}"
