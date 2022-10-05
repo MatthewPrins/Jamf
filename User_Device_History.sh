@@ -117,12 +117,12 @@ echo
 echo "ID,date"
 
 #iterate through $xmlarray/$idarray
-#seds: delete everything before/after date_time_utc field
-#0:10 in echo: only print the first 10 characters of that field (date only)
+#seds: delete everything before/after date_time_epoch field
+#echo: print ID and the epoch date changed to y/m/d
 
 for i in $(seq 0 $((${#idarray[@]}-1))); do 
 	devicedate=$(echo "${xmlarray[i]}" \
-		| sed 's/.*<date_time_utc>//g' \
-		| sed 's/<\/date_time_utc>.*//g' )
-	echo ${idarray[i]},${devicedate:0:10}
+		| sed 's/.*<date_time_epoch>//g' \
+		| sed 's/<\/date_time_epoch>.*//g' )
+	echo ${idarray[i]},$(date -r $(expr $devicedate / 1000) +'%Y-%m-%d')
 done
