@@ -67,7 +67,6 @@ for index,userID in enumerate(userlist,start=1):
 		print (str(index) + " / " + str(len(userlist)))
 		
 		# if less than 5 minutes left, invalidate token and get a new one
-		print ((tokenexpiration-datetime.utcnow()).total_seconds())
 		if (tokenexpiration-datetime.utcnow()).total_seconds() < 600:
 			invalidatetoken()
 			token,tokenexpiration = fetchtoken()
