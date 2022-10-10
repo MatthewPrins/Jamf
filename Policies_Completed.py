@@ -35,14 +35,6 @@ def invalidatetoken():
 # get initial token	
 token,tokenexpiration = fetchtoken()
 
-# import computer group data from API as a dictionary
-response = requests.get(url=jamfurl + "/JSSResource/computergroups/id/" + computergroupid , headers={'Accept': 'application/json','Authorization': 'Bearer ' + token})
-
-# iterate through imported data to get IDs
-computerlist=[]
-for profile in json.loads(response.text)['computer_group']['computers']:
-	computerlist.append(profile['id'])
-
 # import all policy API data as a dictionary
 response = requests.get(url=jamfurl + "/JSSResource/computergroups/id/" + computergroupid , headers={'Accept': 'application/json','Authorization': 'Bearer ' + token})
 
