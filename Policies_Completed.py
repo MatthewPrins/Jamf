@@ -85,3 +85,5 @@ for index,computerid in enumerate(computerlist,start=1):
 		if (tokenexpiration-datetime.utcnow()).total_seconds() < 600:
 			invalidatetoken()
 			token,tokenexpiration = fetchtoken()
+
+invalidatetoken()
