@@ -1,4 +1,4 @@
-These are production Jamf Pro shell scripts I've written for my work Jamf Cloud instance (with a few changes) or occasionally to help out others. 
+These are Jamf Pro shell/Python scripts I've written for my work Jamf Cloud instance (with a few changes) or occasionally to help out others. 
 
 Please note:
 * Of course you already know this, but TEST BEFORE USING. Don't trust that what works properly on my Jamf Pro will work the same on yours.
