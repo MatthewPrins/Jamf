@@ -36,4 +36,4 @@ curl --request POST \
 --header "Authorization: Bearer $bearerToken" \
 --form "file=@$csvfile"
 
-echo "done"
+echo "upload done"
