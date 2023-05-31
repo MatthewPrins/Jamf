@@ -72,16 +72,22 @@ for value in $devices
 do
 	#curl: retrieve all device XML data from the current ID
 	#xmllint: from that XML, pull the OS Version field
-	#1st sed: delete any semicolons
-	#2nd sed: delete any <application_name/> (or <name/>)
-	#3rd sed: delete any <application_name>
-	#4th sed: replace any </application_name> with a semicolon
-	#last sed: delete the last extra semicolon
 	
 	appsdevice=$(curl -s -H "Authorization: Bearer ${bearerToken}" "Accept: application/xml" \
 		$url/JSSResource/$JSSpathtype/id/$value \
-		| xmllint --xpath "//$pathtypeapp" - \
+		| xmllint --xpath "//$pathtypeapp" - )
+
+	#echo: get rid of newlines 		
+	#1st sed: delete any semicolons
+	#2nd sed: change "</name> <name>" combo to semicolon
+	#3rd sed: delete any <application_name/> (or <name/>)
+	#4th sed: delete any <application_name>
+	#5th sed: replace any </application_name> with a semicolon
+	#last sed: delete the last extra semicolon
+		
+	appsdevice=$(echo $appsdevice \
 		| sed "s/;//g" \
+		| sed "s/<\/$seddevices> <$seddevices>/;/g" \
 		| sed "s/<$seddevices\/>//g" \
 		| sed "s/<$seddevices>//g" \
 		| sed "s/<\/$seddevices>/;/g" \
