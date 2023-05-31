@@ -1,5 +1,5 @@
 #!/bin/bash
-#Matthew Prins 2022
+#Matthew Prins 2023
 #https://github.com/MatthewPrins/Jamf/
 
 #Sums count of each app in device/computer group
