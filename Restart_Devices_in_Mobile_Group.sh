@@ -1,8 +1,16 @@
 #!/bin/bash
-#Matthew Prins 2022
+#Matthew Prins 2023
 #https://github.com/MatthewPrins/Jamf/
 
 #Restart all items in a particular mobile group in Jamf
+
+#Minimum permissions:
+	#Objects:
+		#Mobile Devices (Create, Read)
+		#Smart Mobile Device Groups (Read)
+		#Static Mobile Device Groups (Read)
+	#Actions
+		#Send Mobile Device Restart Device Command
 
 #Code for getting token from https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview
 
@@ -12,7 +20,7 @@ password="xxxxxx"
 url="https://xxxxxx.jamfcloud.com"
 
 #Group ID number -- found in URL on group's page
-groupid="xxxxxx"
+groupid="44"
 
 #Token variable declarations
 bearerToken=""
@@ -43,13 +51,18 @@ checkTokenExpiration
 
 #curl: pull XML data based on group ID
 #xmllint: keep only the mobile device IDs from the XML (e.g. <id>456</id>)
+#tr: delete whitespace
 #1st sed: delete "<id>"s
 #2nd sed: replace "</id>"s with commas
 #3rd sed: delete extra final comma
 
+echo $(curl -s -H "Authorization: Bearer ${bearerToken}" "Accept: application/xml" \
+	$url/JSSResource/mobiledevicegroups/id/$groupid )
+
 csv=$(curl -s -H "Authorization: Bearer ${bearerToken}" "Accept: application/xml" \
 	$url/JSSResource/mobiledevicegroups/id/$groupid \
 	| xmllint --xpath "//mobile_device/id" - \
+	| tr -d '[:space:]' \
 	| sed 's/<id>//g' \
 	| sed 's/<\/id>/,/g' \
 	| sed 's/.$//')
@@ -57,4 +70,4 @@ csv=$(curl -s -H "Authorization: Bearer ${bearerToken}" "Accept: application/xml
 #Restart all devices in csv list
 
 curl -s -X POST -H "Authorization: Bearer ${bearerToken}" "Accept: application/xml" \
-	$url/JSSResource/mobiledevicecommands/command/RestartDevice/id/$csv
+$url/JSSResource/mobiledevicecommands/command/RestartDevice/id/$csv
