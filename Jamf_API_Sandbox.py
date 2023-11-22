@@ -2,7 +2,7 @@
 # Matthew Prins 2023
 # https://github.com/MatthewPrins/Jamf/
 
-# play with GET API commands with the Jamf Pro API
+# play with GET requests with the Jamf Pro API
 
 # pip install requests if not already done
 
@@ -36,7 +36,7 @@ token,tokenexpiration = fetchtoken()
 
 #intro
 print("Welcome to the Jamf Pro API sandbox!")
-print("Only GET commands are supported -- from both the new API and classic API")
+print("Only GET requests are supported -- from both the new API and classic API")
 print("For paginated endpoints from the new API, the first page of 100 records is shown")
 print("Get command info from https://developer.jamf.com/jamf-pro/reference")
 
